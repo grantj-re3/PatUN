@@ -1,0 +1,51 @@
+
+##############################################################################
+### 1. This program is *incomplete*. That is, it does *not* work.
+### 2. For the time being, the program does *not* use a graphical
+###    user interface (GUI). It uses plain text display and
+###    keyboard input.
+##############################################################################
+# Fedora release 20 (Heisenbug)
+# Linux 3.11.10-301.fc20.x86_64 #1 SMP Thu Dec 5 14:01:17 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+
+# Version
+$ ruby -v
+ruby 2.0.0p353 (2013-11-22 revision 43784) [x86_64-linux]
+
+# Run the MVC main program
+$ ./patun_main.rb
+
+##############################################################################
+A patience card game PatUN (pronounced "Pattern") written using the
+Model-View-Controller design pattern from first principles (without
+using a web framework or other framework library).
+
+Main:        patun_main.rb
+  Run this program. Initialises the MVC components then invokes the
+  controller input/event loop.
+
+Model:       patun.rb
+  Data storage and business/logic rules. Written without
+  knowing how data will be displayed or input/events acquired.
+
+View:        patun_view.rb
+  Display of output. Requires knowledge of model.
+
+Controller:  patun_controller.rb
+  Loop - acquire input/events; based on the input received, it typically
+  invokes the model then invokes the view.
+
+https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller
+http://www.dgp.toronto.edu/~dwigdor/teaching/csc2524/2012_F/papers/mvc.pdf
+
+##############################################################################
+PatUN has the following concepts defined in
+  https://en.wikipedia.org/wiki/Glossary_of_patience_terms
+
+- Stock (or Talon)
+- Tableau (or Layout): Initially a 5x5 grid of cells
+- Cell (different definition to the above glossary): A cell is a location
+  on the tableau/grid. It can contain 0-4 cards inclusive. All cards within
+  a cell *must* have the same value. (Suits do not play any role in this
+  card game.)
+
