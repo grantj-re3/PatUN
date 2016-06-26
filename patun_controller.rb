@@ -21,9 +21,21 @@ class PatUnController
   ############################################################################
   def event_loop
     while true
-      # Get event (eg. user input, mouse click)
-      e = @event.get
-      if @game.status == :choose_mobile
+      if @game.status == :start_cycle
+        @game.start_cycle
+        @game.check_game_status
+        @view.show_with_marked_cells(@game, :mobile) unless @game.status == :check_game_status
+
+      elsif @game.status == :check_game_status
+        @game.check_game_status
+        @view.show_with_marked_cells(@game, :mobile) unless @game.status == :check_game_status
+
+      elsif [:end_of_game_win, :end_of_game_lose].include?(@game.status)
+        @view.show_with_marked_cells(@game, :mobile)
+        exit 0
+
+      elsif @game.status == :choose_mobile
+        e = @event.get
         case e[:event]
 
         when :event_quit
@@ -42,10 +54,15 @@ class PatUnController
           @view.show_with_marked_cells(@game, :mobile)
 
           @game.find_filler_cells
-          @view.show_with_marked_cells(@game, :filler)
+          if @game.filler.empty?
+            @game.status = :start_cycle
+          else
+            @view.show_with_marked_cells(@game, :filler)
+          end
         end
 
       else	# :choose_filler
+        e = @event.get
         case e[:event]
 
         when :event_quit
@@ -62,8 +79,6 @@ class PatUnController
         when :event_select
           @game.fill_empty_mobile_cell
           @game.fill_empty_filler_cell
-          @game.find_mobile_cells
-          @view.show_with_marked_cells(@game, :mobile)
         end
 
       end	# if

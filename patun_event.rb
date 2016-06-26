@@ -11,7 +11,7 @@
 class PatUnEvent
   S_UP     = "6"	# Numeric keypad: right arrow
   S_DOWN   = "4"	# Numeric keypad: left arrow
-  S_SELECT = "."	# Convenient umeric keypad key
+  S_SELECT = "."	# Convenient numeric keypad key
   S_QUIT   = "q"
 
   ############################################################################

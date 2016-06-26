@@ -24,8 +24,7 @@ require "patun_event"
 patience_game = PatUn.new
 view = PatUnView.new
 event = PatUnEvent.new
-controller = PatUnController.new(patience_game, view, event)
 
-view.show_with_marked_cells(patience_game, :mobile)
+controller = PatUnController.new(patience_game, view, event)
 controller.event_loop
 

@@ -12,6 +12,9 @@ class PatUnView
 
   ############################################################################
   def show_with_marked_cells(game, marked_type=nil)
+    puts "Status: #{game.status}"
+    puts "Number of filler cells: #{game.filler.length}" if game.status == :choose_filler
+
     case marked_type
     when :filler
       list = game.filler
@@ -52,11 +55,18 @@ class PatUnView
       }
       puts "  #{a.reverse.join(' ')}"	# Move cell for column 0 to right side
     }
+
+    if game.status == :end_of_game_win
+      puts "The game is over. Congratulations, you WIN! (#{game.tableau.length})"
+    elsif game.status == :end_of_game_lose
+      puts "The game is over. Bad luck, you did not win. (#{game.tableau.length})"
+    end
   end
 
   ############################################################################
   def to_s_stock_summary(game)
-    "Stock remaining: #{game.stock.cards.length}   NEXT CARD: #{game.stock.cards.last.chvalue}"
+    ch = game.stock.cards.length == 0 ? "" : game.stock.cards.last.chvalue
+    "Stock remaining: #{game.stock.cards.length}   NEXT CARD: #{ch}"
   end
 
   ############################################################################
