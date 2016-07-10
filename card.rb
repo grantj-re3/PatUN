@@ -15,33 +15,19 @@ class Card
   attr_accessor :value, :suit
 
   ############################################################################
-  # format1 = {
-  #   :type  => :type_value_suit,
-  #   :value => :A,			# :A,:2,...:T,:J,:Q,:K
-  #   :suit  => :c,			# :c, :d, :h, :s
-  # }
-  # format2 = {
-  #   :type  => :type_int,
-  #   :int => 0,			# 0..51
-  # }
-  #
-  def initialize(card_hash)
-    case card_hash[:type]
-
-    when :type_value_suit
-      @value = card_hash[:value]
-      @suit  = card_hash[:suit]
-
-    when :type_int
-      @value = VALUE_SYMS[card_hash[:int] % 13]
-      @suit = SUIT_SYMS[card_hash[:int] / 13]
-
-    else
-      @value = nil
-      @suit  = nil
-
-    end
+  def initialize(value, suit)
     # FIXME: Do range checks
+    @value = value.to_s.upcase.to_sym	# :A, :2, ... :T, :J, :Q, :K
+    @suit  = suit.to_s.downcase.to_sym	# :c, :d, :h, :s
+  end
+
+  ############################################################################
+  def self.new_from_int(icard)
+    raise ArgumentError.new('Argument must be in the range 0..51') unless (0..51).include?(icard)
+
+    value = VALUE_SYMS[icard % 13]
+    suit = SUIT_SYMS[icard / 13]
+    self.new(value, suit)
   end
 
   ############################################################################

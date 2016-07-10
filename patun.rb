@@ -48,6 +48,7 @@ class PatUn
   def start_cycle
     @cycle_count += 1
 
+=begin
     if @cycle_count == 1
       # Initialise game near end-game for debugging
       dir = File.expand_path(".", File.dirname(__FILE__))
@@ -58,6 +59,7 @@ class PatUn
       fname = "#{DIR}/save3.34.Marshal"
       @stock, @tableau, @cycle_count = self.class.load_object(fname)
     end
+=end
 
     save_object = [@stock, @tableau, @cycle_count]
     @model_history << save_object

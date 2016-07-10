@@ -34,21 +34,19 @@ class CardPack
   ############################################################################
   def shuffle_icards
     index = 0
-    num_unshuffled = TOTAL_CARDS
     icards_shuffled = []
 
-    TOTAL_CARDS.times{
+    TOTAL_CARDS.downto(1){|num_unshuffled|
       count = rand(1 .. num_unshuffled)
       index = (index + count) % num_unshuffled
       icards_shuffled << @icards.delete_at(index)
-      num_unshuffled -= 1
     }
     @icards = icards_shuffled
   end
 
   ############################################################################
   def icards_to_cards
-    @cards = @icards.inject([]){|a,i| a << Card.new(:type=>:type_int, :int=>i); a}
+    @cards = @icards.inject([]){|a,i| a << Card.new_from_int(i); a}
   end
 
   ############################################################################
