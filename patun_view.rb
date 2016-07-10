@@ -45,10 +45,10 @@ class PatUnView
         cell = @game.tableau[rowcol]
         s = []
         if cell
-          # Cell format: "mvvvv" where
-          #   m = "*" if current filler cell; "+" if non-current filler cell; " " otherwise
+          # Cell format: "mvvvvm" where
+          #   m = "<" or ">" if current filler cell; "(" or ")" if non-current filler cell; " " otherwise
           #   v = A,2,3...T,J,Q,K or " "
-          # Eg. "+JJJ "
+          # Eg. "(JJJ )"
           m1 = " "
           m2 = " "
           if list.include?(rowcol)

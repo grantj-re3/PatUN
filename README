@@ -1,6 +1,6 @@
 
 ##############################################################################
-### 1. This program is *incomplete*. That is, it does *not* work.
+### 1. This program is *incomplete* but it does work in a rudimentary way.
 ### 2. For the time being, the program does *not* use a graphical
 ###    user interface (GUI). It uses plain text display and
 ###    keyboard input.
