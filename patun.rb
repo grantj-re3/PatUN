@@ -26,7 +26,7 @@ class PatUn
   def initialize
     @stock = CardPack.new
     # @tableau is a 1-dimensional hash containing our grid of cells.
-    # The @tableau key is an array of the form [row,column].
+    # The @tableau key is an array of the form [row,column]. Eg. @tableau[ [0,4] ]
     # The @tableau value is an array of 0-4 cards inclusive. All
     # cards in a given cell have the same value (eg. all are "J").
     @tableau = {}
@@ -39,7 +39,7 @@ class PatUn
     @filler = []		# List of filler cells within the tableau
     @filler_index = nil
 
-    @model_history = []		# List of move-history
+    @model_history = []		# List of cycle-history
     @cycle_count = 0
     @status = :start_cycle
   end

@@ -10,6 +10,8 @@
 ##############################################################################
 class PatUnController
 
+  END_OF_GAME_STATUS = [:end_of_game_win, :end_of_game_lose]
+
   ############################################################################
   # Contructor for controller
   def initialize(game, view, event)
@@ -20,7 +22,7 @@ class PatUnController
 
   ############################################################################
   def event_loop
-    while true
+    while !END_OF_GAME_STATUS.include?(@game.status)
       if @game.status == :start_cycle
         @game.start_cycle
         @game.check_game_status
@@ -29,9 +31,6 @@ class PatUnController
       elsif @game.status == :check_game_status
         @game.check_game_status
         @view.show_with_marked_cells(:mobile) unless @game.status == :check_game_status
-
-      elsif [:end_of_game_win, :end_of_game_lose].include?(@game.status)
-        exit 0
 
       elsif @game.status == :choose_mobile
         e = @event.get

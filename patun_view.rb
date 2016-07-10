@@ -40,7 +40,7 @@ class PatUnView
 
     (0..4).each{|row|
       a = []
-      (0..11).each{|col|
+      (0..10).each{|col|
         rowcol = [row,col]
         cell = @game.tableau[rowcol]
         s = []
