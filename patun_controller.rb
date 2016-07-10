@@ -31,7 +31,6 @@ class PatUnController
         @view.show_with_marked_cells(:mobile) unless @game.status == :check_game_status
 
       elsif [:end_of_game_win, :end_of_game_lose].include?(@game.status)
-        @view.show_with_marked_cells(:mobile)
         exit 0
 
       elsif @game.status == :choose_mobile

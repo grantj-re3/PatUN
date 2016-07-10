@@ -57,6 +57,7 @@ class PatUn
       fname = "#{DIR}/save3.11.Marshal"
       fname = "#{DIR}/save3.21.Marshal"
       fname = "#{DIR}/save3.34.Marshal"
+      fname = "#{DIR}/save4.38.Marshal"
       @stock, @tableau, @cycle_count = self.class.load_object(fname)
     end
 =end

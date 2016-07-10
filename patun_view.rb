@@ -49,14 +49,16 @@ class PatUnView
           #   m = "*" if current filler cell; "+" if non-current filler cell; " " otherwise
           #   v = A,2,3...T,J,Q,K or " "
           # Eg. "+JJJ "
-          m = " "
+          m1 = " "
+          m2 = " "
           if list.include?(rowcol)
-            m = rowcol == list[list_index] ? "*" : "+"
+            m1 = rowcol == list[list_index] ? "<" : "("
+            m2 = rowcol == list[list_index] ? ">" : ")"
           end
           s = cell.inject([]){|a,c| a << c.chvalue; a}
-          (4 - cell.length).times{s << " " * 1}
+          s << " " * (4 - cell.length)
         end
-        a << (cell ? m + s.join : " " * 5)
+        a << (cell ? m1 + s.join + m2 : " " * 6)
       }
       puts "  #{a.reverse.join(' ')}"	# Move cell for column 0 to right side
     }
