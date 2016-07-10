@@ -19,7 +19,7 @@ class PatUn
 
   attr_accessor :status
 
-  attr_reader :stock, :tableau, :cycle_count,
+  attr_reader :stock, :tableau, :cycle_count, :model_history,
     :mobile, :mobile_index, :filler, :filler_index
 
   ############################################################################
@@ -62,9 +62,41 @@ class PatUn
     end
 =end
 
-    save_object = [@stock, @tableau, @cycle_count]
+    save_object = {
+      :stock		=> @stock.clone_contents,
+      :tableau		=> tableau_clone_contents,
+      :cycle_count	=> @cycle_count
+    }
     @model_history << save_object
     self.class.save_object(save_object, @cycle_count)	# Debug
+  end
+
+  ############################################################################
+  # Return a shallow copy of cards. Ie. The hash object is new, but the
+  # references are to the same 52 Card objects.
+  def tableau_clone_contents
+    @tableau.inject({}){|h,(rowcol,cell)| h[rowcol] = cell.clone if cell; h}
+  end
+
+  ############################################################################
+  def undo_cycle
+    if @status != :choose_mobile && @model_history.length >= 1
+      # Jump back to the begining of *this* cycle
+      obj = @model_history.last
+      @stock, @tableau, @cycle_count = [ obj[:stock], obj[:tableau], obj[:cycle_count] ]
+
+      @model_history.pop	# Remove last cycle as it will be resaved in start_cycle()
+      @status = :start_cycle
+
+    elsif @status == :choose_mobile && @model_history.length >= 2
+      # Jump back to the begining of the *previous* cycle
+      @model_history.pop
+      obj = @model_history.last
+      @stock, @tableau, @cycle_count = [ obj[:stock], obj[:tableau], obj[:cycle_count] ]
+
+      @model_history.pop	# Remove last cycle as it will be resaved in start_cycle()
+      @status = :start_cycle
+    end
   end
 
   ############################################################################

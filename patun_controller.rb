@@ -39,6 +39,9 @@ class PatUnController
         when :event_quit
           break
 
+        when :event_undo
+          @game.undo_cycle
+
         when :event_up
           @game.mobile_next
           @view.show_with_marked_cells(:mobile)
@@ -65,6 +68,9 @@ class PatUnController
 
         when :event_quit
           break
+
+        when :event_undo
+          @game.undo_cycle
 
         when :event_up
           @game.filler_next

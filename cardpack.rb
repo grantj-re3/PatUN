@@ -14,7 +14,7 @@ require "card"
 class CardPack
   TOTAL_CARDS = 52
 
-  attr_accessor :cards
+  attr_accessor :cards, :icards
 
   ############################################################################
   def initialize
@@ -23,6 +23,16 @@ class CardPack
     make_icards
     shuffle_icards
     icards_to_cards
+  end
+
+  ############################################################################
+  # Return a shallow copy of cards. Ie. The CardPack object is new, but the
+  # references are to the same 52 Card objects.
+  def clone_contents
+    pack = self.class.new
+    pack.icards = @icards.clone
+    pack.cards = @cards.clone
+    pack
   end
 
   ############################################################################

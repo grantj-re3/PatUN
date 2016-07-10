@@ -12,6 +12,7 @@ class PatUnEvent
   S_UP     = "6"	# Numeric keypad: right arrow
   S_DOWN   = "4"	# Numeric keypad: left arrow
   S_SELECT = "."	# Convenient numeric keypad key
+  S_UNDO   = "u"
   S_QUIT   = "q"
 
   ############################################################################
@@ -23,18 +24,20 @@ class PatUnEvent
   ############################################################################
   def get
     while true
-      printf "\nEnter command (%s=Next, %s=Prev, %s=Select, %s=Quit): ", S_UP, S_DOWN, S_SELECT, S_QUIT
+      printf "\nEnter command (%s=Next, %s=Prev, %s=Select, %s=Undo, %s=Quit): ", S_UP, S_DOWN, S_SELECT, S_UNDO, S_QUIT
       command = STDIN.readline.strip.downcase
 
       case command
-      when S_QUIT
-        return {:event => :event_quit}
       when S_UP
         return {:event => :event_up}
       when S_DOWN
         return {:event => :event_down}
       when S_SELECT
         return {:event => :event_select}
+      when S_UNDO
+        return {:event => :event_undo}
+      when S_QUIT
+        return {:event => :event_quit}
       end
 
     end
