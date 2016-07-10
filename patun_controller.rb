@@ -24,14 +24,14 @@ class PatUnController
       if @game.status == :start_cycle
         @game.start_cycle
         @game.check_game_status
-        @view.show_with_marked_cells(@game, :mobile) unless @game.status == :check_game_status
+        @view.show_with_marked_cells(:mobile) unless @game.status == :check_game_status
 
       elsif @game.status == :check_game_status
         @game.check_game_status
-        @view.show_with_marked_cells(@game, :mobile) unless @game.status == :check_game_status
+        @view.show_with_marked_cells(:mobile) unless @game.status == :check_game_status
 
       elsif [:end_of_game_win, :end_of_game_lose].include?(@game.status)
-        @view.show_with_marked_cells(@game, :mobile)
+        @view.show_with_marked_cells(:mobile)
         exit 0
 
       elsif @game.status == :choose_mobile
@@ -43,21 +43,21 @@ class PatUnController
 
         when :event_up
           @game.mobile_next
-          @view.show_with_marked_cells(@game, :mobile)
+          @view.show_with_marked_cells(:mobile)
 
         when :event_down
           @game.mobile_previous
-          @view.show_with_marked_cells(@game, :mobile)
+          @view.show_with_marked_cells(:mobile)
 
         when :event_select
           @game.mobile_join_cells
-          @view.show_with_marked_cells(@game, :mobile)
+          @view.show_with_marked_cells(:mobile)
 
           @game.find_filler_cells
           if @game.filler.empty?
             @game.status = :start_cycle
           else
-            @view.show_with_marked_cells(@game, :filler)
+            @view.show_with_marked_cells(:filler)
           end
         end
 
@@ -70,11 +70,11 @@ class PatUnController
 
         when :event_up
           @game.filler_next
-          @view.show_with_marked_cells(@game, :filler)
+          @view.show_with_marked_cells(:filler)
 
         when :event_down
           @game.filler_previous
-          @view.show_with_marked_cells(@game, :filler)
+          @view.show_with_marked_cells(:filler)
 
         when :event_select
           @game.fill_empty_mobile_cell

@@ -11,33 +11,38 @@
 class PatUnView
 
   ############################################################################
-  def show_with_marked_cells(game, marked_type=nil)
-    puts "Status: #{game.status}"
-    puts "Number of filler cells: #{game.filler.length}" if game.status == :choose_filler
+  def initialize(game)
+    @game = game			# The model object
+  end
+
+  ############################################################################
+  def show_with_marked_cells(marked_type=nil)
+    puts "Status: #{@game.status}"
+    puts "Number of filler cells: #{@game.filler.length}" if @game.status == :choose_filler
 
     case marked_type
     when :filler
-      list = game.filler
-      list_index = game.filler_index
+      list = @game.filler
+      list_index = @game.filler_index
     when :mobile
-      puts to_s_mobile(game)
+      puts to_s_mobile
 
-      list = game.mobile
-      list_index = game.mobile_index
+      list = @game.mobile
+      list_index = @game.mobile_index
     else	# eg. nil; assume no marked cells
       list = []
       list_index = nil
     end
 
-    puts to_s_stock(game)
+    puts to_s_stock
     puts
-    puts to_s_stock_summary(game)
+    puts to_s_stock_summary
 
     (0..4).each{|row|
       a = []
       (0..11).each{|col|
         rowcol = [row,col]
-        cell = game.tableau[rowcol]
+        cell = @game.tableau[rowcol]
         s = []
         if cell
           # Cell format: "mvvvv" where
@@ -56,28 +61,28 @@ class PatUnView
       puts "  #{a.reverse.join(' ')}"	# Move cell for column 0 to right side
     }
 
-    if game.status == :end_of_game_win
-      puts "The game is over. Congratulations, you WIN! (#{game.tableau.length})"
-    elsif game.status == :end_of_game_lose
-      puts "The game is over. Bad luck, you did not win. (#{game.tableau.length})"
+    if @game.status == :end_of_game_win
+      puts "The game is over. Congratulations, you WIN! (#{@game.tableau.length})"
+    elsif @game.status == :end_of_game_lose
+      puts "The game is over. Bad luck, you did not win. (#{@game.tableau.length})"
     end
   end
 
   ############################################################################
-  def to_s_stock_summary(game)
-    ch = game.stock.cards.length == 0 ? "" : game.stock.cards.last.chvalue
-    "Stock remaining: #{game.stock.cards.length}   NEXT CARD: #{ch}"
+  def to_s_stock_summary
+    ch = @game.stock.cards.length == 0 ? "" : @game.stock.cards.last.chvalue
+    "Stock remaining: #{@game.stock.cards.length}   NEXT CARD: #{ch}"
   end
 
   ############################################################################
-  def to_s_stock(game)
-    "Stock:  #{game.stock.cards.inject([]){|a,c| a << c.to_s; a}.join(",")}"
+  def to_s_stock
+    "Stock:  #{@game.stock.cards.inject([]){|a,c| a << c.to_s; a}.join(",")}"
   end
 
   ############################################################################
-  def to_s_mobile(game)
-    mlist = game.mobile.inject([]){|a,(row,col)| a << "[#{row},#{col}]"; a}.join(",")
-    "Mobile cards (#{game.mobile.length}):  #{mlist}"
+  def to_s_mobile
+    mlist = @game.mobile.inject([]){|a,(row,col)| a << "[#{row},#{col}]"; a}.join(",")
+    "Mobile cards (#{@game.mobile.length}):  #{mlist}"
   end
 
 end

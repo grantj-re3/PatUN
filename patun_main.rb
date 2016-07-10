@@ -21,10 +21,10 @@ require "patun_event"
 ##############################################################################
 # Main
 ##############################################################################
-patience_game = PatUn.new
-view = PatUnView.new
+patience_game_model = PatUn.new
+view = PatUnView.new(patience_game_model)
 event = PatUnEvent.new
 
-controller = PatUnController.new(patience_game, view, event)
+controller = PatUnController.new(patience_game_model, view, event)
 controller.event_loop
 
