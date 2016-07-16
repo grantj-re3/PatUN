@@ -18,14 +18,15 @@ class PatUnView
   ############################################################################
   def show_with_marked_cells(marked_type=nil)
     puts "Status: #{@game.status}"
-    puts "Number of filler cells: #{@game.filler.length}" if @game.status == :choose_filler
-
+    summary_strs = []
     case marked_type
     when :filler
+      summary_strs << to_s_filler_summary
+
       list = @game.filler
       list_index = @game.filler_index
     when :mobile
-      puts to_s_mobile
+      summary_strs << to_s_mobile_summary
 
       list = @game.mobile
       list_index = @game.mobile_index
@@ -34,9 +35,10 @@ class PatUnView
       list_index = nil
     end
 
-    puts to_s_stock
-    puts
-    puts to_s_stock_summary
+    #puts to_s_stock
+    summary_strs << to_s_stock_summary
+    summary_strs << to_s_next_card
+    puts summary_strs.join(";  ")
 
     (0..4).each{|row|
       a = []
@@ -71,14 +73,29 @@ class PatUnView
   end
 
   ############################################################################
+  def to_s_next_card
+    cards = @game.stock.cards
+    sprintf "NEXT CARD: %s", cards.length == 0 ? "" : cards.last.chvalue
+  end
+
+  ############################################################################
   def to_s_stock_summary
-    ch = @game.stock.cards.length == 0 ? "" : @game.stock.cards.last.chvalue
-    "Stock remaining: #{@game.stock.cards.length}   NEXT CARD: #{ch}"
+    sprintf "Stock remaining: %2d", @game.stock.cards.length
   end
 
   ############################################################################
   def to_s_stock
     "Stock:  #{@game.stock.cards.inject([]){|a,c| a << c.to_s; a}.join(",")}"
+  end
+
+  ############################################################################
+  def to_s_filler_summary
+    sprintf "Number of filler cards: %2d", @game.filler.length
+  end
+
+  ############################################################################
+  def to_s_mobile_summary
+    sprintf "Number of mobile cards: %2d", @game.mobile.length
   end
 
   ############################################################################

@@ -52,7 +52,6 @@ class PatUnController
 
         when :event_select
           @game.mobile_join_cells
-          @view.show_with_marked_cells(:mobile)
 
           @game.find_filler_cells
           if @game.filler.empty?

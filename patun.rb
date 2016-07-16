@@ -13,6 +13,7 @@ require "cardpack"
 
 ##############################################################################
 class PatUn
+  WILL_STORE_MOVES = true
   SERIAL_OBJECT = Marshal		# Object-serialisation: YAML or Marshal
   DIR = File.expand_path(".", File.dirname(__FILE__))
   BASENAME = "save_history_PatUn"
@@ -68,7 +69,7 @@ class PatUn
       :cycle_count	=> @cycle_count
     }
     @model_history << save_object
-    self.class.save_object(save_object, @cycle_count)	# Debug
+    self.class.save_object(save_object, @cycle_count) if WILL_STORE_MOVES
   end
 
   ############################################################################
