@@ -14,7 +14,15 @@ require "card"
 class CardPack
   TOTAL_CARDS = 52
 
-  attr_accessor :cards, :icards
+  # Constants for encoding/decoding pack (ie. icards)
+  BITS_PER_CARD_COUNT = 8			# Store count of 52-54,104-106,etc
+  CARD_COUNT_MASK = ("1" * BITS_PER_CARD_COUNT).to_i(2)	# Corresponding bit-mask
+  BITS_PER_ICARD = 6				# Store int 0..51
+  ICARD_MASK = ("1" * BITS_PER_ICARD).to_i(2)	# Corresponding bit-mask
+  STRING_ENCODE_BITS_PER_DIGIT = 5		# Implies 2**STRING_ENCODE_BITS_PER_DIGIT digits
+  STRING_ENCODE_RADIX = 2 ** STRING_ENCODE_BITS_PER_DIGIT	# digits=0,1,2,...a,b,c,...
+
+  attr_accessor :cards, :icards, :encode_from_icards, :decode_to_icards
 
   ############################################################################
   def initialize(will_populate=true)
@@ -65,24 +73,33 @@ class CardPack
   ############################################################################
   # Encode the pack of icards into a Bignum.
   def encode_from_icards
-    bits_per_icard = 6			# 6 bits to store int 0..51
-    code = @icards.reverse.inject(0){|accum,icard| (accum << bits_per_icard) + icard}
-    code = (code << 8) + @icards.length	# 8 bits for number of icards
+    code = @icards.reverse.inject(0){|accum,icard| (accum << BITS_PER_ICARD) + icard}
+    code = (code << BITS_PER_CARD_COUNT) + @icards.length
     code
+  end
+
+  ############################################################################
+  # String version of encoded icards. Use a large radix so the string
+  # will be shorter.
+  def to_s_encode_from_icards
+    enc_num_bits = @icards.length * BITS_PER_ICARD + BITS_PER_CARD_COUNT
+    enc_num_str_digits = (enc_num_bits / STRING_ENCODE_BITS_PER_DIGIT.to_f).ceil
+    fmt = "%#{enc_num_str_digits}s"
+
+    # tr below pads leading (string) "digits" with zero
+    sprintf(fmt, encode_from_icards.to_s(STRING_ENCODE_RADIX)).tr(' ', '0')
   end
 
   ############################################################################
   # Decode from a Bignum to a pack of icards.
   def decode_to_icards(code)
-    num_cards = code & 0b1111_1111
-    code = code >> 8
+    num_cards = code & CARD_COUNT_MASK
+    code = code >> BITS_PER_CARD_COUNT
 
     icards = []
-    bits_per_icard = 6			# 6 bits to store int 0..51
-    mask = ("1" * bits_per_icard).to_i(2)
     num_cards.times{
-      icards << (code & mask)
-      code = code >> bits_per_icard
+      icards << (code & ICARD_MASK)
+      code = code >> BITS_PER_ICARD
     }
     icards
   end

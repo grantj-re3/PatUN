@@ -8,6 +8,7 @@
 # http://www.gnu.org/licenses/
 #
 ##############################################################################
+require "etc"
 require "card"
 require "cardpack"
 
@@ -111,6 +112,7 @@ class PatUn
         else
           @status = :end_of_game_lose
         end
+details_of_completed_game  # DEBUG
 
       else
         add_tableau_column_from_stock
@@ -290,6 +292,17 @@ class PatUn
     end
 
     @status = :start_cycle
+  end
+
+  ############################################################################
+  def details_of_completed_game
+    game_details = {
+      :pack_encoded	=> @stock.to_s_encode_from_icards,
+      :num_cells	=> @tableau.length,
+      :user_name	=> Etc.getlogin,
+      :datestamp	=> Time.now.strftime("%F %T %z"),	# FIXME: Use UTC?
+    }
+puts game_details.inspect	# DEBUG
   end
 
   ############################################################################

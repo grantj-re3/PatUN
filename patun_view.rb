@@ -17,6 +17,7 @@ class PatUnView
 
   ############################################################################
   def show_with_marked_cells(marked_type=nil)
+    puts "Game ID: #{@game.stock.to_s_encode_from_icards}"
     puts "Status: #{@game.status}"
     summary_strs = []
     case marked_type
