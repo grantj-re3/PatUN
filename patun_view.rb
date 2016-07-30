@@ -17,8 +17,7 @@ class PatUnView
 
   ############################################################################
   def show_with_marked_cells(marked_type=nil)
-    puts "Game ID: #{@game.stock.to_s_encode_from_icards}"
-    puts "Status: #{@game.status}"
+    puts "\nGame ID: #{@game.stock.to_s_encode_from_icards}"
     summary_strs = []
     case marked_type
     when :filler
@@ -66,10 +65,15 @@ class PatUnView
       puts "  #{a.reverse.join(' ')}"	# Move cell for column 0 to right side
     }
 
-    if @game.status == :end_of_game_win
+    case @game.status
+    when :end_of_game_win
       puts "The game is over. Congratulations, you WIN! (#{@game.tableau.length})"
-    elsif @game.status == :end_of_game_lose
+    when :end_of_game_lose
       puts "The game is over. Bad luck, you did not win. (#{@game.tableau.length})"
+    when :choose_mobile
+      puts "Choose mobile card."
+    when :choose_filler
+      puts "Choose a card to fill the gap (from left column or bottom row)."
     end
   end
 

@@ -24,7 +24,7 @@ class PatUnEvent
   ############################################################################
   def get
     while true
-      printf "\nEnter command (%s=Next, %s=Prev, %s=Select, %s=Undo, %s=Quit): ", S_UP, S_DOWN, S_SELECT, S_UNDO, S_QUIT
+      printf "Enter command (%s=Next, %s=Prev, %s=Select, %s=Undo, %s=Quit): ", S_UP, S_DOWN, S_SELECT, S_UNDO, S_QUIT
       command = STDIN.readline.strip.downcase
 
       case command

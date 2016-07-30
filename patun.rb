@@ -18,6 +18,7 @@ class PatUn
   SERIAL_OBJECT = Marshal		# Object-serialisation: YAML or Marshal
   DIR = File.expand_path(".", File.dirname(__FILE__))
   BASENAME = "save_history_PatUn"
+  FPATH_SCORES = "#{DIR}/scores.txt"
 
   attr_accessor :status
 
@@ -112,7 +113,6 @@ class PatUn
         else
           @status = :end_of_game_lose
         end
-details_of_completed_game  # DEBUG
 
       else
         add_tableau_column_from_stock
@@ -295,14 +295,15 @@ details_of_completed_game  # DEBUG
   end
 
   ############################################################################
-  def details_of_completed_game
-    game_details = {
-      :pack_encoded	=> @stock.to_s_encode_from_icards,
-      :num_cells	=> @tableau.length,
-      :user_name	=> Etc.getlogin,
-      :datestamp	=> Time.now.strftime("%F %T %z"),	# FIXME: Use UTC?
-    }
-puts game_details.inspect	# DEBUG
+  # Only call this method at the completion of a game
+  def save_completed_game_summary
+    rec = [
+      @tableau.length,				# Number of cells
+      @stock.to_s_encode_from_icards,		# Game ID
+      Time.now.strftime("%F %T %z"),		# Datestamp  (FIXME: Use UTC?)
+      Etc.getlogin,				# Username
+    ].join(", ")
+    File.open(FPATH_SCORES, "a"){|f| f.puts rec}  # File append. Not thread-safe
   end
 
   ############################################################################

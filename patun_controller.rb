@@ -87,6 +87,7 @@ class PatUnController
       end	# if
 
     end		# while
+    @game.save_completed_game_summary if END_OF_GAME_STATUS.include?(@game.status)
   end
 
 end
