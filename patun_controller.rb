@@ -37,10 +37,18 @@ class PatUnController
         case e[:event]
 
         when :event_quit
-          break
+          return {:quit_without_asking => true}
 
         when :event_undo
           @game.undo_cycle
+
+        when :event_game_id
+          s_game_id = e[:data]
+          if CardPack.cm_game_id_to_icards(s_game_id)
+            return {:quit_without_asking => false, :game_id => s_game_id}
+          else
+            puts "Invalid Game ID: \"#{s_game_id}\""
+          end
 
         when :event_up
           @game.mobile_next
@@ -66,10 +74,18 @@ class PatUnController
         case e[:event]
 
         when :event_quit
-          break
+          return {:quit_without_asking => true}
 
         when :event_undo
           @game.undo_cycle
+
+        when :event_game_id
+          s_game_id = e[:data]
+          if CardPack.cm_game_id_to_icards(s_game_id)
+            return {:quit_without_asking => false, :game_id => s_game_id}
+          else
+            puts "Invalid Game ID: \"#{s_game_id}\""
+          end
 
         when :event_up
           @game.filler_next
@@ -88,6 +104,7 @@ class PatUnController
 
     end		# while
     @game.save_completed_game_summary if END_OF_GAME_STATUS.include?(@game.status)
+    {:quit_without_asking => false}
   end
 
 end

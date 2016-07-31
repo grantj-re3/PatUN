@@ -26,8 +26,8 @@ class PatUn
     :mobile, :mobile_index, :filler, :filler_index
 
   ############################################################################
-  def initialize
-    @stock = CardPack.new
+  def initialize(s_game_id=nil)
+    @stock = CardPack.new(s_game_id)
     # @tableau is a 1-dimensional hash containing our grid of cells.
     # The @tableau key is an array of the form [row,column]. Eg. @tableau[ [0,4] ]
     # The @tableau value is an array of 0-4 cards inclusive. All
@@ -299,7 +299,7 @@ class PatUn
   def save_completed_game_summary
     rec = [
       @tableau.length,				# Number of cells
-      @stock.to_s_encode_from_icards,		# Game ID
+      @stock.icards_to_game_id,			# Game ID
       Time.now.strftime("%F %T %z"),		# Datestamp  (FIXME: Use UTC?)
       Etc.getlogin,				# Username
     ].join(", ")
