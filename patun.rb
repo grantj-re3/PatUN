@@ -234,6 +234,16 @@ class PatUn
   end
 
   ############################################################################
+  def next_card_in_list(which_list)
+    which_list == :mobile ? mobile_next : filler_next
+  end
+
+  ############################################################################
+  def previous_card_in_list(which_list)
+    which_list == :mobile ? mobile_previous : filler_previous
+  end
+
+  ############################################################################
   def mobile_next
     @mobile_index = (@mobile_index + 1) % @mobile.length if @mobile_index
   end
