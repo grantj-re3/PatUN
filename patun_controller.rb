@@ -39,6 +39,9 @@ class PatUnController
         when :event_quit
           return {:quit_without_asking => true}
 
+        when :event_new_game
+          return {:new_game => true}
+
         when :event_undo
           @game.undo_cycle
 
@@ -75,6 +78,9 @@ class PatUnController
 
         when :event_quit
           return {:quit_without_asking => true}
+
+        when :event_new_game
+          return {:new_game => true}
 
         when :event_undo
           @game.undo_cycle

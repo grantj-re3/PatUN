@@ -45,15 +45,20 @@ class GameSelector
         puts "Invalid Game ID: \"#{s_game_id}\""
         exit 1
       end
+      # Setup the the MVC components
       patience_game_model = PatUn.new(s_game_id)
       view = PatUnView.new(patience_game_model)
       event = PatUnEvent.new
 
       controller = PatUnController.new(patience_game_model, view, event)
-      actions = controller.event_loop
+      actions = controller.event_loop	# Run the MVC (ie. play this game ID)
 
       if actions[:quit_without_asking]
         will_play_game = false
+
+      elsif actions[:new_game]
+        will_play_game = true
+        s_game_id = nil
 
       elsif actions[:game_id]
         will_play_game = true

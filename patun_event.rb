@@ -10,17 +10,18 @@
 ##############################################################################
 class PatUnEvent
   # Main-menu keyboard inputs
-  S_DOWN   = "4"	# Numeric keypad: left arrow
-  S_UP     = "6"	# Numeric keypad: right arrow
-  S_SELECT = "."	# Convenient numeric keypad key
-  S_UNDO   = "u"
-  S_MORE   = "m"
-  S_QUIT   = "q"
+  S_DOWN	= "4"	# Numeric keypad: left arrow
+  S_UP		= "6"	# Numeric keypad: right arrow
+  S_SELECT	= "."	# Convenient numeric keypad key
+  S_UNDO	= "u"
+  S_MORE	= "o"
+  S_NEW_GAME	= "n"
+  S_QUIT	= "q"
 
   # More-menu keyboard inputs
-  S_GAME_ID  = "g"
-  S_RULES    = "r"
-  S_CONTINUE = "c"
+  S_GAME_ID	= "g"
+  S_RULES	= "r"
+  S_CONTINUE	= "c"
 
   ############################################################################
   # Contructor
@@ -55,7 +56,8 @@ class PatUnEvent
   # Get events from Main-menu
   def get
     while true
-      printf "Enter command (%s=Prev, %s=Next, %s=Select, %s=Undo, %s=More, %s=Quit): ", S_DOWN, S_UP, S_SELECT, S_UNDO, S_MORE, S_QUIT
+      printf "Enter command (%s=Prev, %s=Next, %s=Select, %s=Undo, %s=Other, %s=NewGame, %s=Quit): ",
+        S_DOWN, S_UP, S_SELECT, S_UNDO, S_MORE, S_NEW_GAME, S_QUIT
       command = STDIN.readline.strip.downcase
 
       case command
@@ -70,6 +72,8 @@ class PatUnEvent
       when S_MORE
         event = get_more
         return event if event
+      when S_NEW_GAME
+        return {:event => :event_new_game}
       when S_QUIT
         return {:event => :event_quit}
       end

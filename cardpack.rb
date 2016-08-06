@@ -32,12 +32,11 @@ class CardPack
     if will_populate
       if s_game_id
         game_id_to_icards(s_game_id)
-        icards_to_cards
       else
         make_icards
         shuffle_icards
-        icards_to_cards
       end
+      icards_to_cards
     end
   end
 
@@ -54,7 +53,7 @@ class CardPack
   ############################################################################
   def make_icards
     @icards = []
-    (1 .. TOTAL_CARDS).each{|i| @icards << i-1}
+    0.upto(TOTAL_CARDS-1).each{|i| @icards << i}
   end
 
   ############################################################################
