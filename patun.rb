@@ -14,6 +14,8 @@ require "cardpack"
 
 ##############################################################################
 class PatUn
+  INITIAL_NUM_MOBILE_CARDS_MIN = 4	# Suggest: 1..8
+
   WILL_STORE_MOVES = true
   SERIAL_OBJECT = Marshal		# Object-serialisation: YAML or Marshal
   DIR = File.expand_path(".", File.dirname(__FILE__))
@@ -35,6 +37,23 @@ class PatUn
 
   ############################################################################
   def initialize(s_game_id=nil)
+    setup_game(s_game_id)
+    num_shuffles = 1
+    unless s_game_id
+      # Re-shuffle cards until number of mobile cards meets threshold
+      find_mobile_cells
+      while @mobile.length < INITIAL_NUM_MOBILE_CARDS_MIN
+        setup_game
+        find_mobile_cells
+        num_shuffles += 1
+        #printf("%d ", num_shuffles) if num_shuffles % 1000 == 0
+      end
+      #puts num_shuffles
+    end
+  end
+
+  ############################################################################
+  def setup_game(s_game_id=nil)
     @stock = CardPack.new(s_game_id)
     # @tableau is a 1-dimensional hash containing our grid of cells.
     # The @tableau key is an array of the form [row,column]. Eg. @tableau[ [0,4] ]
