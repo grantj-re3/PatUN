@@ -17,8 +17,16 @@ class PatUn
   WILL_STORE_MOVES = true
   SERIAL_OBJECT = Marshal		# Object-serialisation: YAML or Marshal
   DIR = File.expand_path(".", File.dirname(__FILE__))
+  DEBUG_DIR = "#{DIR}/debug"
   BASENAME = "save_history_PatUn"
   FPATH_SCORES = "#{DIR}/scores.txt"
+
+  # Use this variable to initialise the game part-way through some earlier
+  # game (ie. load a file previously saved when WILL_STORE_MOVES was true).
+  # Eg. Useful for debugging near the end-game.
+  # - true  = initialise with some save-object
+  # - false = perform a normal initialisation
+  @@debug_load_initial_save_object = false
 
   attr_accessor :status
 
@@ -51,19 +59,14 @@ class PatUn
   def start_cycle
     @cycle_count += 1
 
-=begin
-    if @cycle_count == 1
+    if @cycle_count == 1 && @@debug_load_initial_save_object
+      @@debug_load_initial_save_object = false
       # Initialise game near end-game for debugging
       dir = File.expand_path(".", File.dirname(__FILE__))
-      fname = "#{DIR}/save2.25.Marshal"
-      fname = "#{DIR}/save2.27.Marshal"
-      fname = "#{DIR}/save3.11.Marshal"
-      fname = "#{DIR}/save3.21.Marshal"
-      fname = "#{DIR}/save3.34.Marshal"
-      fname = "#{DIR}/save4.38.Marshal"
-      @stock, @tableau, @cycle_count = self.class.load_object(fname)
+      fname = "#{DIR}/save5win/save_history_PatUn.33.Marshal"
+      h = self.class.load_object(fname)
+      @stock, @tableau, @cycle_count = h[:stock], h[:tableau], h[:cycle_count]
     end
-=end
 
     save_object = {
       :stock		=> @stock.clone_contents,
@@ -83,7 +86,8 @@ class PatUn
 
   ############################################################################
   def undo_cycle
-    if @status != :choose_mobile && @model_history.length >= 1
+    # Reach here when @status in :choose_filler, :choose_mobile, :end_of_game_lose
+    if @status == :choose_filler && @model_history.length >= 1
       # Jump back to the begining of *this* cycle
       obj = @model_history.last
       @stock, @tableau, @cycle_count = [ obj[:stock], obj[:tableau], obj[:cycle_count] ]
@@ -91,7 +95,7 @@ class PatUn
       @model_history.pop	# Remove last cycle as it will be resaved in start_cycle()
       @status = :start_cycle
 
-    elsif @status == :choose_mobile && @model_history.length >= 2
+    elsif @status != :choose_filler && @model_history.length >= 2
       # Jump back to the begining of the *previous* cycle
       @model_history.pop
       obj = @model_history.last
@@ -318,7 +322,8 @@ class PatUn
 
   ############################################################################
   def self.save_object(object, cycle)
-    fpath = sprintf("%s/%s.%02d.%s", DIR, BASENAME, cycle, SERIAL_OBJECT)
+    Dir.mkdir(DEBUG_DIR) unless File.directory?(DEBUG_DIR)
+    fpath = sprintf("%s/%s.%02d.%s", DEBUG_DIR, BASENAME, cycle, SERIAL_OBJECT)
     s = SERIAL_OBJECT.dump(object)
     File.write(fpath, s)
   end

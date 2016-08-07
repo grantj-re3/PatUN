@@ -22,7 +22,8 @@ class PatUnController
 
   ############################################################################
   def event_loop
-    while !END_OF_GAME_STATUS.include?(@game.status)
+    caller_action = nil
+    while @game.status != :end_of_game_win
       if @game.status == :start_cycle
         @game.start_cycle
         @game.check_game_status
@@ -33,14 +34,16 @@ class PatUnController
         @view.show_with_marked_cells(:mobile) unless @game.status == :check_game_status
 
       else	# :choose_mobile & :choose_filler
-        e = @event.get
+        e = @game.status == :end_of_game_lose ? @event.get_no_move : @event.get
         case e[:event]
 
         when :event_quit
-          return {:quit_without_asking => true}
+          caller_action = {:quit_without_asking => true}
+          break
 
         when :event_new_game
-          return {:new_game => true}
+          caller_action = {:new_game => true}
+          break
 
         when :event_undo
           @game.undo_cycle
@@ -48,7 +51,8 @@ class PatUnController
         when :event_game_id
           s_game_id = e[:data]
           if CardPack.cm_game_id_to_icards(s_game_id)
-            return {:quit_without_asking => false, :game_id => s_game_id}
+            caller_action = {:quit_without_asking => false, :game_id => s_game_id}
+            break
           else
             puts "Invalid Game ID: \"#{s_game_id}\""
           end
@@ -83,7 +87,7 @@ class PatUnController
 
     end		# while
     @game.save_completed_game_summary if END_OF_GAME_STATUS.include?(@game.status)
-    {:quit_without_asking => false}
+    caller_action ? caller_action : {:quit_without_asking => false}
   end
 
 end

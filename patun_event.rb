@@ -81,4 +81,30 @@ class PatUnEvent
     end
   end
 
+  ############################################################################
+  # Get events (similar to Main-menu) but when no moves are possible
+  # (eg. once the game has been won or lost). This permits S_UNDO even
+  # if the player has already lost (in case the player can improve the
+  # situation). Hence do not permit events S_DOWN, S_UP & S_SELECT.
+  def get_no_move
+    while true
+      printf "Enter command (%s=Undo, %s=Other, %s=NewGame, %s=Quit): ",
+        S_UNDO, S_MORE, S_NEW_GAME, S_QUIT
+      command = STDIN.readline.strip.downcase
+
+      case command
+      when S_UNDO
+        return {:event => :event_undo}
+      when S_MORE
+        event = get_more
+        return event if event
+      when S_NEW_GAME
+        return {:event => :event_new_game}
+      when S_QUIT
+        return {:event => :event_quit}
+      end
+
+    end
+  end
+
 end
