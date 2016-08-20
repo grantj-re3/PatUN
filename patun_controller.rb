@@ -23,7 +23,7 @@ class PatUnController
   ############################################################################
   def event_loop
     caller_action = nil
-    while @game.status != :end_of_game_win
+    while true
       if @game.status == :start_cycle
         @game.start_cycle
         @game.check_game_status
@@ -34,7 +34,15 @@ class PatUnController
         @view.show_with_marked_cells(:mobile) unless @game.status == :check_game_status
 
       else	# :choose_mobile & :choose_filler
-        e = @game.status == :end_of_game_lose ? @event.get_no_move : @event.get
+        omits = []
+        if @game.status == :end_of_game_lose
+          # Player can undo then get different end-of-game score later
+          @game.remember_best_score_at_end	# Remember player's best score
+          omits = [:Prev, :Next, :Select]
+        elsif @game.status == :end_of_game_win
+          omits = [:Prev, :Next, :Select, :Undo]
+        end
+        e = @event.get(omits)
         case e[:event]
 
         when :event_quit
@@ -86,7 +94,7 @@ class PatUnController
       end	# if
 
     end		# while
-    @game.save_completed_game_summary if END_OF_GAME_STATUS.include?(@game.status)
+    @game.save_completed_game_summary if END_OF_GAME_STATUS.include?(@game.status) || @game.best_score
     caller_action ? caller_action : {:quit_without_asking => false}
   end
 

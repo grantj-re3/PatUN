@@ -23,6 +23,16 @@ class PatUnEvent
   S_RULES	= "r"
   S_CONTINUE	= "c"
 
+  MAIN_MENU_CHOICES = [
+    [:Prev,	S_DOWN],
+    [:Next,	S_UP],
+    [:Select,	S_SELECT],
+    [:Undo,	S_UNDO],
+    [:Other,	S_MORE],
+    [:NewGame,	S_NEW_GAME],
+    [:Quit,	S_QUIT],
+  ]
+
   ############################################################################
   # Contructor
   def initialize
@@ -54,11 +64,16 @@ class PatUnEvent
 
   ############################################################################
   # Get events from Main-menu
-  def get
+  def get(omits=[])
+    # Exclude menu options specified in the omits-list
+    choices = MAIN_MENU_CHOICES.inject([]){|a,(desc,ch)| a << "#{ch}=#{desc}" unless omits.include?(desc); a}
     while true
-      printf "Enter command (%s=Prev, %s=Next, %s=Select, %s=Undo, %s=Other, %s=NewGame, %s=Quit): ",
-        S_DOWN, S_UP, S_SELECT, S_UNDO, S_MORE, S_NEW_GAME, S_QUIT
+      printf "Enter command (%s): ", choices.join(", ")
       command = STDIN.readline.strip.downcase
+
+      # Do not respond to commands in the omits-list
+      choice_pair = MAIN_MENU_CHOICES.rassoc(command)
+      next if choice_pair && omits.include?(choice_pair[0])
 
       case command
       when S_UP
@@ -67,32 +82,6 @@ class PatUnEvent
         return {:event => :event_down}
       when S_SELECT
         return {:event => :event_select}
-      when S_UNDO
-        return {:event => :event_undo}
-      when S_MORE
-        event = get_more
-        return event if event
-      when S_NEW_GAME
-        return {:event => :event_new_game}
-      when S_QUIT
-        return {:event => :event_quit}
-      end
-
-    end
-  end
-
-  ############################################################################
-  # Get events (similar to Main-menu) but when no moves are possible
-  # (eg. once the game has been won or lost). This permits S_UNDO even
-  # if the player has already lost (in case the player can improve the
-  # situation). Hence do not permit events S_DOWN, S_UP & S_SELECT.
-  def get_no_move
-    while true
-      printf "Enter command (%s=Undo, %s=Other, %s=NewGame, %s=Quit): ",
-        S_UNDO, S_MORE, S_NEW_GAME, S_QUIT
-      command = STDIN.readline.strip.downcase
-
-      case command
       when S_UNDO
         return {:event => :event_undo}
       when S_MORE

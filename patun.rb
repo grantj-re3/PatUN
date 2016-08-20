@@ -33,7 +33,7 @@ class PatUn
   attr_accessor :status
 
   attr_reader :stock, :tableau, :cycle_count, :model_history,
-    :mobile, :mobile_index, :filler, :filler_index
+    :mobile, :mobile_index, :filler, :filler_index, :best_score
 
   ############################################################################
   def initialize(s_game_id=nil)
@@ -72,6 +72,16 @@ class PatUn
     @model_history = []		# List of cycle-history
     @cycle_count = 0
     @status = :start_cycle
+    @best_score = nil		# Best score at end-of-game
+  end
+
+  ############################################################################
+  # Remember best (lowest) score at end-of-game.
+  def remember_best_score_at_end
+    # @tableau.length can only be used as a score at :end_of_game_lose or :end_of_game_win
+    if [:end_of_game_win, :end_of_game_lose].include?(@status)
+      @best_score = @best_score ? [@best_score, @tableau.length].min : @tableau.length
+    end
   end
 
   ############################################################################
@@ -330,8 +340,9 @@ class PatUn
   ############################################################################
   # Only call this method at the completion of a game
   def save_completed_game_summary
+    remember_best_score_at_end
     rec = [
-      @tableau.length,				# Number of cells
+      @best_score,				# Number of cells
       @stock.icards_to_game_id,			# Game ID
       Time.now.strftime("%F %T %z"),		# Datestamp  (FIXME: Use UTC?)
       Etc.getlogin,				# Username
