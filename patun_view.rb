@@ -9,15 +9,24 @@
 #
 ##############################################################################
 class PatUnView
+  COUNTER_KEYS = (0..4).map{|i| sym = i.to_s.to_sym}	# Keys: :0, :1,... :4
 
   ############################################################################
   def initialize(game)
     @game = game			# The model object
+    @tableau_counts = {}
   end
 
   ############################################################################
   def show_with_marked_cells(marked_type=nil)
     puts "\nGame ID: #{@game.stock.icards_to_game_id}"
+    calculate_tableau_counts
+    #puts "Card values: #{@tableau_counts[:cards][:by_value]}"
+    #puts "Cell values: #{@tableau_counts[:cells][:by_value]}"
+    #puts
+    #puts "Card counts: #{@tableau_counts[:cards][:by_count]}"
+    puts "Cell counts: #{@tableau_counts[:cells][:by_count]}"
+
     summary_strs = []
     case marked_type
     when :filler
@@ -107,6 +116,38 @@ class PatUnView
   def to_s_mobile
     mlist = @game.mobile.inject([]){|a,(row,col)| a << "[#{row},#{col}]"; a}.join(",")
     "Mobile cards (#{@game.mobile.length}):  #{mlist}"
+  end
+
+  ############################################################################
+  def calculate_tableau_counts
+    tc = {}
+    tc[:cards] = Hash.new(0); tc[:cells] = Hash.new(0)
+
+    # Collect tableau counts
+    (0..4).each{|row|
+      (0..10).each{|col|
+        cell = @game.tableau[ [row,col] ]
+        next unless cell
+        tc[:cells][ cell.first.value ] += 1
+        tc[:cards][ cell.first.value ] += cell.length
+      }
+    }
+
+    # Build a summary line for each set of counts
+    by_value = {}; by_count = {}; s_count = {}
+    [:cards, :cells].each{|cc|
+      by_value[cc] = []; by_count[cc] = {}; s_count[cc] = []
+      COUNTER_KEYS.each{|key| by_count[cc][key] = []}
+
+      Card::VALUE_SYMS.each{|v|
+        by_count[cc][ tc[cc][v].to_s.to_sym ] << v
+        by_value[cc] << "#{v}:#{tc[cc][v]}"
+      }
+      COUNTER_KEYS.each{|key| s_count[cc] << "#{key}:[#{by_count[cc][key].join(',')}]" }
+      tc[cc][:by_count] = s_count[cc].join("  ")
+      tc[cc][:by_value] = by_value[cc].join("  ")
+    }
+    @tableau_counts = tc
   end
 
 end
