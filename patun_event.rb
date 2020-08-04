@@ -49,7 +49,7 @@ class PatUnEvent
       case command
       when S_GAME_ID
         printf "Enter or paste the Game ID: "
-        s_game_id = STDIN.readline.strip.downcase
+        s_game_id = STDIN.readline.strip
         return {:event => :event_game_id, :data => s_game_id}
 
       when S_RULES
