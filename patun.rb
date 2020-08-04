@@ -15,6 +15,7 @@ require "cardpack"
 ##############################################################################
 class PatUn
   INITIAL_NUM_MOBILE_CARDS_MIN = 4	# Suggest: 1..8
+  INITIAL_NUM_4_OF_KIND_MAX = 0	# Suggest: 0..1
 
   WILL_STORE_MOVES = true
   SERIAL_OBJECT = Marshal		# Object-serialisation: YAML or Marshal
@@ -22,6 +23,8 @@ class PatUn
   DEBUG_DIR = "#{DIR}/debug"
   BASENAME = "save_history_PatUn"
   FPATH_SCORES = "#{DIR}/scores.txt"
+
+  COUNTER_KEYS = (0..4).map{|i| sym = i.to_s.to_sym}	# Keys: :0, :1,... :4
 
   # Use this variable to initialise the game part-way through some earlier
   # game (ie. load a file previously saved when WILL_STORE_MOVES was true).
@@ -33,18 +36,27 @@ class PatUn
   attr_accessor :status
 
   attr_reader :stock, :tableau, :cycle_count, :model_history,
-    :mobile, :mobile_index, :filler, :filler_index, :best_score
+    :mobile, :mobile_index, :filler, :filler_index, :best_score, :tableau_counts
 
   ############################################################################
   def initialize(s_game_id=nil)
     setup_game(s_game_id)
+    calculate_tableau_counts
+    num_4ofkind = @tableau_counts[:cells][:values_by_count][4.to_s.to_sym].length
+
     num_shuffles = 1
     unless s_game_id
-      # Re-shuffle cards until number of mobile cards meets threshold
       find_mobile_cells
-      while @mobile.length < INITIAL_NUM_MOBILE_CARDS_MIN
+      #puts "num_4ofkind=#{num_4ofkind} | @mobile.length=#{@mobile.length}"
+
+      # Re-shuffle cards until number of mobile cards >= min AND number of "4-of-a-kind" groups <= max
+      while @mobile.length < INITIAL_NUM_MOBILE_CARDS_MIN || num_4ofkind > INITIAL_NUM_4_OF_KIND_MAX
         setup_game
+        calculate_tableau_counts
+        num_4ofkind = @tableau_counts[:cells][:values_by_count][4.to_s.to_sym].length
         find_mobile_cells
+        #puts "num_4ofkind=#{num_4ofkind} | @mobile.length=#{@mobile.length}"
+
         num_shuffles += 1
         #printf("%d ", num_shuffles) if num_shuffles % 1000 == 0
       end
@@ -73,6 +85,8 @@ class PatUn
     @cycle_count = 0
     @status = :start_cycle
     @best_score = nil		# Best score at end-of-game
+
+    @tableau_counts = {}	# Useful info about the tableau
   end
 
   ############################################################################
@@ -362,6 +376,43 @@ class PatUn
   def self.load_object(fname)
     s = File.read(fname)
     return SERIAL_OBJECT.load(s)
+  end
+
+  ############################################################################
+  def calculate_tableau_counts
+    tc = {}
+    tc[:cards] = Hash.new(0); tc[:cells] = Hash.new(0)
+
+    # Collect tableau counts
+    (0..4).each{|row|
+      (0..10).each{|col|
+        cell = @tableau[ [row,col] ]
+        next unless cell
+        tc[:cells][ cell.first.value ] += 1
+        tc[:cards][ cell.first.value ] += cell.length
+      }
+    }
+
+    # Build a summary line for each set of counts
+    by_value = {}; by_count = {}; s_count = {}
+    [:cards, :cells].each{|cc|
+      by_value[cc] = []; by_count[cc] = {}; s_count[cc] = []
+      values_by_count = {}
+      COUNTER_KEYS.each{|key| by_count[cc][key] = []}
+
+      Card::VALUE_SYMS.each{|v|
+        by_count[cc][ tc[cc][v].to_s.to_sym ] << v
+        by_value[cc] << "#{v}:#{tc[cc][v]}"
+      }
+      COUNTER_KEYS.each{|key|
+        s_count[cc] << "#{key}:[#{by_count[cc][key].join(',')}]"
+	values_by_count[key] = by_count[cc][key]
+      }
+      tc[cc][:by_count] = s_count[cc].join("  ")
+      tc[cc][:values_by_count] = values_by_count
+      tc[cc][:by_value] = by_value[cc].join("  ")
+    }
+    @tableau_counts = tc
   end
 
 end
