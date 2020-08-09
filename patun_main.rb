@@ -11,7 +11,7 @@
 #
 ##############################################################################
 # Add dirs to the library path
-$: << File.expand_path(".", File.dirname(__FILE__))
+$: << File.expand_path("lib", File.dirname(__FILE__))
 
 require "cardpack"
 require "patun"
