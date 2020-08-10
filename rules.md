@@ -1,7 +1,4 @@
-PatUN has the following concepts defined in
-
-  https://en.wikipedia.org/wiki/Glossary_of_patience_terms
-  https://semicolon.com/Solitaire/Rules/Glossary.html
+# How to play PatUN - the patience card game
 
 ## Glossary
 
@@ -16,10 +13,14 @@ PatUN has the following concepts defined in
   left-most column of the grid which will fill the space created by
   the moving a mobile card/build.
 
+Similar glossaries:
+- https://semicolon.com/Solitaire/Rules/Glossary.html
+- https://en.wikipedia.org/wiki/Glossary_of_patience_terms
+
 
 ## Initial steps
 
-- Cards are shuffled
+- Cards are shuffled.
 - Cards are dealt to the tableau into a 5x5 grid.
 
 At this point, each element of the grid is a build, and each build
