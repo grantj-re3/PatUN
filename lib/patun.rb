@@ -19,7 +19,7 @@ class PatUn
 
   WILL_STORE_MOVES = true
   SERIAL_OBJECT = Marshal		# Object-serialisation: YAML or Marshal
-  DIR = File.expand_path(".", File.dirname(__FILE__))
+  DIR = File.expand_path("..", File.dirname(__FILE__))
   DEBUG_DIR = "#{DIR}/debug"
   BASENAME = "save_history_PatUn"
   FPATH_SCORES = "#{DIR}/scores.txt"
